@@ -1,0 +1,5 @@
+.env
+desktop.ini
+*.pyc
+*.ipynb
+\venv

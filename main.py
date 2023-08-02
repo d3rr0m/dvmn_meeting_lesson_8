@@ -1,4 +1,5 @@
 import json
+from geopy import distance
 from dotenv import dotenv_values
 import requests
 
@@ -26,9 +27,20 @@ def fetch_coordinates(apikey, address):
 
 def main():
     with open('coffee.json', 'r') as file:
-        city = input('Input your city: ')
-        longitude, altitude = fetch_coordinates(YANDEX_API_KEY, city)
-        print(f'Ваши координаты: {longitude}, {altitude}')
+        city = input('Input your first city: ')
+        longitude_first_place, altitude_first_place = fetch_coordinates(YANDEX_API_KEY, city)
+        print(f'Ваши координаты: {longitude_first_place}, {altitude_first_place}')
+        
+        city = input('Input your second city: ')
+        longitude_second_place, altitude_second_place = fetch_coordinates(YANDEX_API_KEY, city)
+        print(f'Ваши координаты: {longitude_second_place}, {altitude_second_place}')
+
+        distance_km = distance.distance(
+            (altitude_first_place, longitude_first_place), 
+            (altitude_second_place, longitude_second_place),
+            ).km
+        print(distance_km)
+        
         content = file.read()
         coffe_shops = json.loads(content)
         #for cafe in coffe_shops:

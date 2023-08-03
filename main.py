@@ -49,9 +49,11 @@ def main():
                 ).km
             }
             coffee_shops_with_distance.append(item)
-
+        sorted_cafes = sorted(coffee_shops_with_distance, key=get_distance_to_cafe)
+        five_nearest_cafe = sorted_cafes[:5]
+        pprint.pprint(five_nearest_cafe, sort_dicts=False)
         nearest_cafe = min(coffee_shops_with_distance, key=get_distance_to_cafe)
-        pprint.pprint(nearest_cafe, sort_dicts=False)
+        #pprint.pprint(nearest_cafe, sort_dicts=False)
         #pprint.pprint(coffee_shops_with_distance, sort_dicts=False)
 
 

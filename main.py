@@ -1,4 +1,5 @@
 import json
+import pprint
 from geopy import distance
 from dotenv import dotenv_values
 import requests
@@ -25,26 +26,33 @@ def fetch_coordinates(apikey, address):
     return lon, lat
 
 
-def main():
-    with open('coffee.json', 'r') as file:
-        city = input('Input your first city: ')
-        longitude_first_place, altitude_first_place = fetch_coordinates(YANDEX_API_KEY, city)
-        print(f'Ваши координаты: {longitude_first_place}, {altitude_first_place}')
-        
-        city = input('Input your second city: ')
-        longitude_second_place, altitude_second_place = fetch_coordinates(YANDEX_API_KEY, city)
-        print(f'Ваши координаты: {longitude_second_place}, {altitude_second_place}')
+def get_distance_to_cafe(cafe):
+    return cafe['distance']
 
-        distance_km = distance.distance(
-            (altitude_first_place, longitude_first_place), 
-            (altitude_second_place, longitude_second_place),
-            ).km
-        print(distance_km)
-        
+
+def main():
+    place = input('Введите ваше местопорожение: ')
+    place_longitude, place_latitude = fetch_coordinates(YANDEX_API_KEY, place)
+    print(f'Ваши координаты: {place_longitude, place_latitude}')
+    coffee_shops_with_distance = []
+    with open('coffee.json', 'r') as file:
         content = file.read()
-        coffe_shops = json.loads(content)
-        #for cafe in coffe_shops:
-            #print(cafe['Name'], cafe['Longitude_WGS84'], cafe['Latitude_WGS84'])
+        coffee_shops = json.loads(content)
+        for cafe in coffee_shops:
+            item = {
+                'name': cafe['Name'],
+                'longitude': cafe['Longitude_WGS84'],
+                'latitude': cafe['Latitude_WGS84'],
+                'distance': distance.distance(
+                    (place_latitude, place_longitude),
+                    (cafe['Latitude_WGS84'], cafe['Longitude_WGS84'])
+                ).km
+            }
+            coffee_shops_with_distance.append(item)
+
+        nearest_cafe = min(coffee_shops_with_distance, key=get_distance_to_cafe)
+        pprint.pprint(nearest_cafe, sort_dicts=False)
+        #pprint.pprint(coffee_shops_with_distance, sort_dicts=False)
 
 
 if __name__ == '__main__':

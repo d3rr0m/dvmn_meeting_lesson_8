@@ -1,11 +1,17 @@
 import json
 import pprint
+import folium
 from geopy import distance
 from dotenv import dotenv_values
 import requests
 
 
 YANDEX_API_KEY = dotenv_values('.env')['YANDEX_API_KEY']
+
+
+def gen_map(place, coffee_shops):
+    m = folium.Map(location=[place])
+    m.save('index.html')
 
 
 def fetch_coordinates(apikey, address):

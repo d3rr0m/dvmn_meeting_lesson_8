@@ -1,6 +1,5 @@
 import json
-import pprint
-import folium
+from folium import Map, Marker
 from geopy import distance
 from dotenv import dotenv_values
 from flask import Flask
@@ -9,20 +8,25 @@ from fetch_coordinates import fetch_coordinates
 
 
 YANDEX_API_KEY = dotenv_values('.env')['YANDEX_API_KEY']
+HTML_FILENAME = 'index.html'
+
+
+def save_map_to_disk(map: Map):
+    map.save(HTML_FILENAME)
 
 
 def gen_map(place, coffee_shops):
-    m = folium.Map(location=place, zoom_start=13)
+    map = Map(location=place, zoom_start=13)
     
     for coffee_shop in coffee_shops:
-        folium.Marker(
+        Marker(
             [coffee_shop['latitude'],
              coffee_shop['longitude']
             ],
             tooltip=coffee_shop['name']
-            ).add_to(m)
+            ).add_to(map)
 
-    m.save('index.html')
+    save_map_to_disk(map)
 
 
 def get_distance_to_cafe(cafe):
@@ -52,15 +56,20 @@ def main():
     five_nearest_coffee_shops = sorted_coffee_shops[:5]
 
     gen_map([place_latitude, place_longitude], five_nearest_coffee_shops)
+    run_site()
+
+
+def get_site():
+    with open(HTML_FILENAME, 'r') as file:
+        return file.read()
 
 
 def run_site():
-    with open('index.html', 'r') as file:
-        return file.read()
+    app = Flask(__name__)
+    app.add_url_rule('/', '5 nearest coffee shops from your location', get_site)
+    app.run('0.0.0.0')
+    
 
 
 if __name__ == '__main__':
     main()
-    app = Flask(__name__)
-    app.add_url_rule('/', 'Test page', run_site)
-    app.run('0.0.0.0')

@@ -35,7 +35,6 @@ def get_distance_to_cafe(cafe):
 def main():
     place = input('Введите ваше местопорожение: ')
     place_longitude, place_latitude = fetch_coordinates(YANDEX_API_KEY, place)
-    print(f'Ваши координаты: {place_longitude, place_latitude}')
 
     with open('coffee.json', 'r') as file:
         content = file.read()

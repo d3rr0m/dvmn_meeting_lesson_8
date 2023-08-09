@@ -2,5 +2,5 @@
 desktop.ini
 *.pyc
 *.ipynb
-\venv
+\venv*
 *.html
